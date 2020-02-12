@@ -8,9 +8,9 @@ public class Main {
     }
 
     public static String stringRevers(String str) {
-        ArrayStack<Character> mas = new ArrayStack<Character>();
+        ArrayStack<Character> mas = new ArrayStack<>();
         StringBuilder sb = new StringBuilder();
-        char[] chars = str.toCharArray();
+        // char[] chars = str.toCharArray();
         for (int i = 0; i < str.length(); i++) {
             mas.push(str.charAt(i));
         }
