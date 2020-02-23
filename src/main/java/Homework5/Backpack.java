@@ -5,9 +5,9 @@ import java.util.*;
 public class Backpack {
 
     static List<Integer> allValue = new ArrayList<>();
-    static int[] weight = {2, 3, 3, 4, 2, 2, 5, 7, 1, 3};
-    static int[] val = {1, 2, 5, 9, 4, 9, 11, 40, 4, 90};
-    static int w = 12;
+    static int[] weight = {2, 3, 3, 4};
+    static int[] val = {1, 2, 5, 9};
+    static int w = 7;
     static int allWeight;
     static int allVal;
 
@@ -31,7 +31,7 @@ public class Backpack {
         if ((allWeight < w && (allWeight + weight[itemNum] > w)) || (allWeight == w)) {
             allValue.add(allVal);
             allWeight = allVal = 0;
-            return recursive(reduceValue(weight), reduceValue(val), w, 0);
+            if (weight.length > 1) return recursive(reduceValue(weight), reduceValue(val), w, 0);
         }
         // TODO вернуть ценность для случая с наибольшей ценностью
         return printBestValue(allValue);
