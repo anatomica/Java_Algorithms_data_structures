@@ -7,6 +7,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
     public static void main(String[] args) {
         Random random = new Random();
+        int sum = 0;
         BinarySearchTree<Integer, Integer> searchTree = new BinarySearchTree<>();
 
         for (int i = 0; i < 20; i++) {
@@ -15,10 +16,15 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
                 searchTree.put(number, 10);
                 System.out.println(number);
             }
-            System.out.println("Balance: " + searchTree.isBalance());
-            System.out.println();
+            if (searchTree.isBalance()) {
+                System.out.println("Balance: true \n");
+                sum++;
+            } else {
+                System.out.println("Balance: false \n");
+            }
             searchTree = new BinarySearchTree<>();
         }
+        System.out.println("Balanced Tree: " + sum*100/20 + " %");
     }
 
     private class Node {
