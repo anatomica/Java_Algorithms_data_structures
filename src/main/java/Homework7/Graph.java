@@ -103,7 +103,7 @@ class Graph {
         }
         refreshFlags();
     }
-    
+
     private int getIndexFromVertices(Vertex vertex) {
         for (int i = 0; i < vertices.length; i++)
             if (vertices[i].equals(vertex))
