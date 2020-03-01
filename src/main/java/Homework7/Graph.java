@@ -11,20 +11,20 @@ class Graph {
         Graph graph = new Graph(size);
         IntStream.range(0, size).forEach(graph::addVertex);
 
-        graph.adj(0, 1);
-        graph.adj(1, 2);
-        graph.adj(0, 3);
-        graph.adj(3, 6);
-        graph.adj(4, 7);
-        graph.adj(4, 5);
-        graph.adj(7, 8);
-        graph.adj(6, 9);
-        graph.adj(6, 7);
-        graph.adj(5, 2);
+        graph.adjMat(0, 1);
+        graph.adjMat(1, 2);
+        graph.adjMat(0, 3);
+        graph.adjMat(3, 6);
+        graph.adjMat(4, 7);
+        graph.adjMat(4, 5);
+        graph.adjMat(7, 8);
+        graph.adjMat(6, 9);
+        graph.adjMat(6, 7);
+        graph.adjMat(5, 2);
 
         graph.inDepth();
         System.out.print(System.lineSeparator());
-        graph.broadwise(true, null);
+        graph.inWidth(true, null);
         System.out.print(System.lineSeparator());
         Graph.Vertex graphVertex = graph.getVertex(9);
         graph.showPath(graphVertex);
@@ -76,7 +76,7 @@ class Graph {
         vertices[quantity++] = new Vertex(label);
     }
 
-    void adj(int start, int end) {
+    void adjMat(int start, int end) {
         adjMatrix[start][end] = 1;
         adjMatrix[end][start] = 1;
     }
@@ -121,21 +121,18 @@ class Graph {
     }
 
     private void refreshFlags() {
-        for (int i = 0; i < vertices.length; i++)
-            vertices[i].setVisited(false);
+        for (Vertex vertex : vertices) vertex.setVisited(false);
     }
 
-    int broadwise(boolean printable, Vertex target) {
-        if (printable)
-            System.out.println("Broadwise: ");
+    private int inWidth(boolean printable, Vertex target) {
+        if (printable) System.out.println("In width: ");
         LinkedList<Vertex> queue = new LinkedList<>();
         vertices[0].setVisited(true);
         queue.add(vertices[0]);
         int next;
         int weight = 0;
         vertices[0].setWeight(weight);
-        if (printable)
-            displayVertex(0);
+        if (printable) displayVertex(0);
         while (!queue.isEmpty()) {
             Vertex current = queue.remove();
             while ((next = getUnvisitedNeighbor(current)) != -1) {
@@ -143,8 +140,7 @@ class Graph {
                 if (vertices[next] == target)
                     return next;
                 vertices[next].setVisited(true);
-                if (printable)
-                    displayVertex(next);
+                if (printable) displayVertex(next);
                 queue.add(vertices[next]);
             }
         }
@@ -173,7 +169,7 @@ class Graph {
             System.out.println(target);
         LinkedList<Vertex> stack = new LinkedList<>();
         int current;
-        if ((current = broadwise(false, target)) >= 0) {
+        if ((current = inWidth(false, target)) >= 0) {
             int previous;
             while ((previous = getPrevious(vertices[current])) != -1) {
                 current = previous;
