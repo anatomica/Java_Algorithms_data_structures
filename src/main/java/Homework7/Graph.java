@@ -11,16 +11,16 @@ class Graph {
         Graph graph = new Graph(size);
         IntStream.range(0, size).forEach(graph::addVertex);
 
-        graph.adjMat(0, 1);
-        graph.adjMat(1, 2);
-        graph.adjMat(0, 3);
-        graph.adjMat(3, 6);
-        graph.adjMat(4, 7);
-        graph.adjMat(4, 5);
-        graph.adjMat(7, 8);
-        graph.adjMat(6, 9);
-        graph.adjMat(6, 7);
-        graph.adjMat(5, 2);
+        graph.addEdge(0, 1);
+        graph.addEdge(1, 2);
+        graph.addEdge(0, 3);
+        graph.addEdge(3, 6);
+        graph.addEdge(4, 7);
+        graph.addEdge(4, 5);
+        graph.addEdge(7, 8);
+        graph.addEdge(6, 9);
+        graph.addEdge(6, 7);
+        graph.addEdge(5, 2);
 
         graph.inDepth();
         System.out.print(System.lineSeparator());
@@ -76,32 +76,13 @@ class Graph {
         vertices[quantity++] = new Vertex(label);
     }
 
-    void adjMat(int start, int end) {
+    void addEdge(int start, int end) {
         adjMatrix[start][end] = 1;
         adjMatrix[end][start] = 1;
     }
 
     private void displayVertex(int index) {
         System.out.printf("[p: %s, w: %s]%n", vertices[index].payload, vertices[index].weight);
-    }
-
-    void inDepth() {
-        System.out.println("In depth: ");
-        vertices[0].setVisited(true);
-        displayVertex(0);
-        LinkedList<Vertex> stack = new LinkedList<>();
-        stack.push(vertices[0]);
-        while (!stack.isEmpty()) {
-            int v = getUnvisitedNeighbor(stack.peek());
-            if (v == -1) {
-                stack.pop();
-            } else {
-                vertices[v].setVisited(true);
-                displayVertex(v);
-                stack.push(vertices[v]);
-            }
-        }
-        refreshFlags();
     }
 
     private int getIndexFromVertices(Vertex vertex) {
@@ -111,40 +92,12 @@ class Graph {
         return -1;
     }
 
-    private int getUnvisitedNeighbor(Vertex vertex) {
+    private int getUnvisited(Vertex vertex) {
         for (int i = 0; i < vertices.length; i++) {
             if (adjMatrix[getIndexFromVertices(vertex)][i] == 1 && !vertices[i].isVisited()) {
                 return i;
             }
         }
-        return -1;
-    }
-
-    private void refreshFlags() {
-        for (Vertex vertex : vertices) vertex.setVisited(false);
-    }
-
-    private int inWidth(boolean printable, Vertex target) {
-        if (printable) System.out.println("In width: ");
-        LinkedList<Vertex> queue = new LinkedList<>();
-        vertices[0].setVisited(true);
-        queue.add(vertices[0]);
-        int next;
-        int weight = 0;
-        vertices[0].setWeight(weight);
-        if (printable) displayVertex(0);
-        while (!queue.isEmpty()) {
-            Vertex current = queue.remove();
-            while ((next = getUnvisitedNeighbor(current)) != -1) {
-                vertices[next].setWeight(current.getWeight() + 1);
-                if (vertices[next] == target)
-                    return next;
-                vertices[next].setVisited(true);
-                if (printable) displayVertex(next);
-                queue.add(vertices[next]);
-            }
-        }
-        refreshFlags();
         return -1;
     }
 
@@ -161,6 +114,53 @@ class Graph {
 
     Vertex getVertex(int i) {
         return vertices[i];
+    }
+
+    private void refreshFlags() {
+        for (Vertex vertex : vertices) vertex.setVisited(false);
+    }
+
+    void inDepth() {
+        System.out.println("In depth: ");
+        vertices[0].setVisited(true);
+        displayVertex(0);
+        LinkedList<Vertex> stack = new LinkedList<>();
+        stack.push(vertices[0]);
+        while (!stack.isEmpty()) {
+            int v = getUnvisited(stack.peek());
+            if (v == -1) {
+                stack.pop();
+            } else {
+                vertices[v].setVisited(true);
+                displayVertex(v);
+                stack.push(vertices[v]);
+            }
+        }
+        refreshFlags();
+    }
+
+    private int inWidth(boolean printable, Vertex target) {
+        if (printable) System.out.println("In width: ");
+        LinkedList<Vertex> queue = new LinkedList<>();
+        vertices[0].setVisited(true);
+        queue.add(vertices[0]);
+        int next;
+        int weight = 0;
+        vertices[0].setWeight(weight);
+        if (printable) displayVertex(0);
+        while (!queue.isEmpty()) {
+            Vertex current = queue.remove();
+            while ((next = getUnvisited(current)) != -1) {
+                vertices[next].setWeight(current.getWeight() + 1);
+                if (vertices[next] == target)
+                    return next;
+                vertices[next].setVisited(true);
+                if (printable) displayVertex(next);
+                queue.add(vertices[next]);
+            }
+        }
+        refreshFlags();
+        return -1;
     }
 
     void showPath(Vertex target) {
