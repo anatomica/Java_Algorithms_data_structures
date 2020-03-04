@@ -6,110 +6,109 @@ import java.io.InputStreamReader;
 
 public class Hash {
     public static void main(String[] args) throws IOException {
-        Item aDataItem;
-        int aKey, size, n, keysPerCell;
-        // Ввод размеров
-        System.out.print("Enter size of hash table: ");
+
+        T data;
+        int key, size, n, keysPerCell;
+        System.out.print("Введите размер хеш таблицы: ");
         size = getInt();
-        System.out.print("Enter initial number of items: ");
+        System.out.print("Введите количество элементов: ");
         n = getInt();
         keysPerCell = 10;
+        boolean doIt = true;
 
-        // Создание таблицы
         HashTable theHashTable = new HashTable(size);
         for(int j = 0; j < n; j++){
-            aKey = (int)(Math.random() * keysPerCell * size);
-            aDataItem = new Item(aKey);
-            theHashTable.insert(aDataItem);
+            key = (int)(Math.random() * keysPerCell * size);
+            data = new T(key);
+            theHashTable.add(data);
         }
 
-        while(true){
-            System.out.print("Enter first letter of ");
-            System.out.print("show, insert, delete, or find: ");
+        while(doIt){
+            System.out.print("Введите: '1' - show, '2' - add, '3' - remove, '4' - contains, '5' - Выход : ");
             char choice = getChar();
             switch(choice){
-                case 's':
+                case '1':
                     theHashTable.display();
                     break;
-                case 'i':
-                    System.out.print("Enter key value to insert: ");
-                    aKey = getInt();
-                    aDataItem = new Item(aKey);
-                    theHashTable.insert(aDataItem);
+                case '2':
+                    System.out.print("Ведите значение для добавления: ");
+                    key = getInt();
+                    data = new T(key);
+                    theHashTable.add(data);
                     break;
-                case 'd':
-                    System.out.print("Enter key value to delete: ");
-                    aKey = getInt();
-                    theHashTable.delete(aKey);
+                case '3':
+                    System.out.print("Введите значение, которое нужно удалить: ");
+                    key = getInt();
+                    theHashTable.remove(key);
                     break;
-                case 'f':
-                    System.out.print("Enter key value to find: ");
-                    aKey = getInt();
-                    aDataItem = theHashTable.find(aKey);
-                    if(aDataItem != null){
-                        System.out.println("Found " + aKey);
+                case '4':
+                    System.out.print("Введите значение, которое нужно найти: ");
+                    key = getInt();
+                    data = theHashTable.contains(key);
+                    if (data != null){
+                        System.out.println("Найдено: " + key);
+                        break;
                     } else {
-                        System.out.println("Could not find " + aKey);
+                        System.out.println("Нет такого значения: " + key);
                         break;
                     }
+                case '5':
+                    System.out.print("Выход!");
+                    doIt = false;
+                    break;
                 default:
-                    System.out.print("Invalid entry\n");
+                    System.out.print("Некорректный ввод! \n");
             }
         }
     }
-    public static String getString() throws IOException {
-        InputStreamReader isr = new InputStreamReader(System.in);
-        BufferedReader br = new BufferedReader(isr);
-        String s = br.readLine();
-        return s;
+
+    private static String getString() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        return br.readLine();
     }
-    public static char getChar() throws IOException {
-        String s = getString();
-        return s.charAt(0);
+
+    private static char getChar() throws IOException {
+        return getString().charAt(0);
     }
-    public static int getInt() throws IOException {
-        String s = getString();
-        return Integer.parseInt(s);
+
+    private static int getInt() throws IOException {
+        return Integer.parseInt(getString());
     }
 
     private static class HashTable {
-        private Item[] hashArr;
+        private T[] hashArr;
         private int arrSize;
-        private Item nonItem;
+        private T nonT;
 
-        public HashTable(int size){
+        private HashTable(int size){
             this.arrSize = size;
-            hashArr = new Item[arrSize];
-            nonItem = new Item(-1);
+            hashArr = new T[arrSize];
+            nonT = new T(-1);
         }
 
-        public void display(){
+        private void display(){
             for(int i = 0; i < arrSize; i++){
                 if(hashArr[i] != null){
                     System.out.println(hashArr[i].getKey());
                 } else {
-                    System.out.println("***");
+                    System.out.println("<--->");
                 }
             }
         }
 
-        public int hashFunc(int key){
+        private int hashFunc(int key){
             return key % arrSize;
         }
 
-        // двойное хеширование
-        public int hashFuncDouble(int key){
+        private int hashFuncDouble(int key){
             return 5 - key % 5;
         }
 
-
-        public void insert(Item item){
+        private void add(T item){
             int key = item.getKey();
             int hashVal = hashFunc(key);
             int stepSize = hashFuncDouble(key);
             while (hashArr[hashVal] != null && hashArr[hashVal].getKey() != -1) {
-//            ++hashVal;   - одинарное хеширование
-                // двойное хеширование
                 hashVal += stepSize;
                 hashVal %= arrSize;
             }
@@ -117,30 +116,29 @@ public class Hash {
             hashArr[hashVal] = item;
         }
 
-        public Item delete(int key){
+        private void remove(int key){
             int hashVal = hashFunc(key);
             int stepSize = hashFuncDouble(key);
             while (hashArr[hashVal] != null) {
                 if (hashArr[hashVal].getKey() == key){
-                    Item temp = hashArr[hashVal];
-                    hashArr[hashVal] = nonItem;
-                    return temp;
+                    T temp = hashArr[hashVal];
+                    hashArr[hashVal] = nonT;
+                    System.out.println("Успешно удалено: " + key);
+                    return;
                 }
-//            ++hashVal;
                 hashVal += stepSize;
                 hashVal %= arrSize;
             }
-            return null;
+            System.out.println("Нет такого элемента: " + key);
         }
 
-        public Item find(int key){
+        private T contains(int key){
             int hashVal = hashFunc(key);
             int stepSize = hashFuncDouble(key);
             while (hashArr[hashVal] != null) {
                 if (hashArr[hashVal].getKey() == key){
                     return hashArr[hashVal];
                 }
-//            ++hashVal;
                 hashVal += stepSize;
                 hashVal %= arrSize;
             }
@@ -161,14 +159,14 @@ public class Hash {
         }
     }
 
-    private static class Item {
+    private static class T {
         private int data;
 
-        public Item(int data){
+        private T(int data){
             this.data = data;
         }
 
-        public int getKey(){
+        private int getKey(){
             return this.data;
         }
     }
