@@ -10,11 +10,6 @@ public class Edge {
         this.weight = weight;
     }
 
-    public Vertex getVertex() {
-        return vertex;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
+    public Vertex getVertex() { return vertex; }
+    public int getWeight() { return weight; }
 }

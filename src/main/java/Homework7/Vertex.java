@@ -5,7 +5,6 @@ import java.util.Objects;
 public class Vertex {
 
     private final String label;
-
     private Vertex prev;
 
     public Vertex(String label) {
