@@ -48,6 +48,9 @@ public class Main {
                twoNumber = oneNumber;
                oneNumber = i;
            }
+           else if (i > twoNumber && i != oneNumber) {
+               twoNumber = i;
+           }
         }
         num.add(oneNumber);
         num.add(twoNumber);
